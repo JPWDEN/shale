@@ -1,0 +1,25 @@
+version: '3'
+services:
+  db:
+    build:
+      context: ./mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sys
+    container_name: go_db
+    extra_hosts:
+      - "dbhost:192.168.0.10"
+    ports:
+      - "3306:3306"
+    tty: true
+  api:
+    image: shaleimage
+    container_name:  shale_api
+    ports:
+      - "8080:8080"
+    environment:
+      - ADDRESS=localhost
+      - PORT=:8080
+      - TEST="false"
+    depends_on:
+      - db
