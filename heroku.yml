@@ -1,0 +1,4 @@
+build:
+  docker:
+   db: mysql/Dockerfile
+   api: go/Dockerfile

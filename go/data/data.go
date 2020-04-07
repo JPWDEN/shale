@@ -44,7 +44,7 @@ INSERT INTO todos VALUES (?, ?, ?, ?, ?, ?)`, todo.ID)
 //InsertTodo adds a brand new, fresh, shiny, little todo item to the todo list
 func (store *StoreType) InsertTodo(todo types.TodoData) error {
 	_, err := store.DAO.Exec(`
-INSERT INTO todos (title, body, category, item_priority, publish_date, active) VALUES (?, ?, ?, ?, ?, ?)`, todo.Title, todo.Body, todo.Category, todo.Priority, time.Now(), true)
+INSERT INTO Todos (title, body, category, item_priority, publish_date, active) VALUES (?, ?, ?, ?, ?, ?)`, todo.Title, todo.Body, todo.Category, todo.Priority, time.Now(), true)
 	if err != nil {
 		log.Errorf("Error inserting todo item: %v", err)
 		return err
@@ -57,9 +57,9 @@ func (store *StoreType) SelectAllTodos(active bool) ([]types.TodoData, error) {
 	var results *sql.Rows
 	var err error
 	if active {
-		results, err = store.DAO.Query(`SELECT * FROM todos WHERE active = TRUE`)
+		results, err = store.DAO.Query(`SELECT * FROM Todos WHERE active = TRUE`)
 	} else {
-		results, err = store.DAO.Query(`SELECT * FROM todos`)
+		results, err = store.DAO.Query(`SELECT * FROM Todos`)
 	}
 	if err != nil {
 		log.Errorf("Error querying mysql: %v", err)
@@ -80,7 +80,7 @@ func (store *StoreType) SelectAllTodos(active bool) ([]types.TodoData, error) {
 
 //SelectByPriority returns all todo items at or above the priority specified ...
 func (store *StoreType) SelectByPriority(priority int) ([]types.TodoData, error) {
-	results, err := store.DAO.Query(`SELECT * FROM todos WHERE item_priority <= ?`, priority)
+	results, err := store.DAO.Query(`SELECT * FROM Todos WHERE item_priority <= ?`, priority)
 	if err != nil {
 		log.Errorf("Error querying mysql: %v", err)
 		return nil, err
@@ -100,7 +100,7 @@ func (store *StoreType) SelectByPriority(priority int) ([]types.TodoData, error)
 
 //SelectByCategory ...
 func (store *StoreType) SelectByCategory(category string) ([]types.TodoData, error) {
-	results, err := store.DAO.Query(`SELECT * FROM todos WHERE category = ?`, category)
+	results, err := store.DAO.Query(`SELECT * FROM Todos WHERE category = ?`, category)
 	if err != nil {
 		log.Errorf("Error querying mysql: %v", err)
 		return nil, err
@@ -121,7 +121,7 @@ func (store *StoreType) SelectByCategory(category string) ([]types.TodoData, err
 //SelectByID returns the todo item associated with the given id
 func (store *StoreType) SelectByID(id int) (types.TodoData, error) {
 	var tag types.TodoData
-	result, err := store.DAO.Query(`SELECT * FROM todos WHERE id = ?`, id)
+	result, err := store.DAO.Query(`SELECT * FROM Todos WHERE id = ?`, id)
 	if err != nil {
 		log.Errorf("Error querying mysql: %v", err)
 		return tag, err
@@ -136,19 +136,19 @@ func (store *StoreType) SelectByID(id int) (types.TodoData, error) {
 
 //DeleteByPriority deletes all todo items at the given priority level
 func (store *StoreType) DeleteByPriority(priority int) error {
-	_, err := store.DAO.Query(`DELETE FROM todos WHERE PRIORITY = ?`, priority)
+	_, err := store.DAO.Query(`DELETE FROM Todos WHERE PRIORITY = ?`, priority)
 	return err
 }
 
 //DeleteByTitle deletes all todo items with the specified title
 func (store *StoreType) DeleteByTitle(title string) error {
-	_, err := store.DAO.Query(`DELETE FROM todos WHERE title = ?`, title)
+	_, err := store.DAO.Query(`DELETE FROM Todos WHERE title = ?`, title)
 	return err
 }
 
 //DeleteByID deletes a todo item that has the given ID
 func (store *StoreType) DeleteByID(id int) error {
-	_, err := store.DAO.Query(`DELETE FROM todos WHERE id = ?`, id)
+	_, err := store.DAO.Query(`DELETE FROM Todos WHERE id = ?`, id)
 	return err
 }
 

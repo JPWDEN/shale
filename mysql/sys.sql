@@ -1,5 +1,3 @@
-USE sys;
-
 CREATE TABLE Todos (
     id INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(32) NOT NULL,
