@@ -13,7 +13,8 @@ services:
       - "3306:3306"
     tty: true
   api:
-    image: shale
+    build:
+      context: ./go
     container_name:  shale_api
     ports:
       - "8080:8080"
