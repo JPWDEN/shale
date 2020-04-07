@@ -36,8 +36,8 @@ func main() {
 	}
 
 	//Set up db connection
-	//db, err := sql.Open("mysql", "root@tcp(db:3306)/sys?parseTime=true")
-	db, err := sql.Open("mysql", "root@tcp(localhost:3306)/sys?parseTime=true")
+	db, err := sql.Open("mysql", "root@tcp(db:3306)/sys?parseTime=true")
+	//db, err := sql.Open("mysql", "root@tcp(localhost:3306)/sys?parseTime=true")
 	if err != nil {
 		panic(err.Error())
 	}
