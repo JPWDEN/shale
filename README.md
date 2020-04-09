@@ -12,53 +12,53 @@ Get Todos:  Returns a list of all todo item<br>
     `GET: /todo/<username>`
     `username:  string`
 
-Get Active/Inactive: Returns a list of all todo items that have either an active or inactive status, as specified
+Get Active/Inactive: Returns a list of all todo items that have either an active or inactive status, as specified<br>
     `GET: /todo/<username>/active/<active>`
     `username: string`
     `active:  boolean`
 
-Get by Priority:  Return a list of todo items with the provided priority level
+Get by Priority:  Return a list of todo items with the provided priority level<br>
     `GET: /todo/<username>/highs/<priority>`
     `username: string`
     `priority: integer`
 
-Get by Category:  Return a list of todo items with the provided category
+Get by Category:  Return a list of todo items with the provided category<br>
     `GET: /todo/<username>/cat/<category>`
     `username: string`
     `category: string`
 
-Get by ID:  Return a list of todo items with the provided id
+Get by ID:  Return a list of todo items with the provided id<br>
     `GET: /todo/<username>/id/<id>`
     `username: string`
     `id: integer`
 
-Add Item: Add a new todo item to the list
+Add Item: Add a new todo item to the list<br>
     `POST: /todo/<username>/add --data { <types.TodoData> }`
     `username: string`
 
 
-Change Title:  Change the title of a todo item based on its id
+Change Title:  Change the title of a todo item based on its id<br>
     `POST: /todo/<username>/ctitle/<id> --data { <types.TodoData>}`
     `username: string`
     `id: integer`
 
-Change Priority:  Change the priority of a todo item based on its id
+Change Priority:  Change the priority of a todo item based on its id<br>
     `POST: /todo/<username>/cpri/<id> --data { <types.TodoData> }`
     `username: string`
     `id integer`
 
-Change Active:  Change whether a todo item is active or inactive based on its id
+Change Active:  Change whether a todo item is active or inactive based on its id<br>
     `POST: /todo/<username>/cactive/<id> --data { <types.TodoData>}`
 
-Remove by Title: Remove a todo item from the list based on its title
+Remove by Title: Remove a todo item from the list based on its title<br>
     `DELETE: /todo/<username>/rmtitle --data { <types.TodoData>}`
     `username: string`
 
-Remove by Priority: Remove all todo items from the list that have a given priority level
+Remove by Priority: Remove all todo items from the list that have a given priority level<br>
     `DELETE: /todo/<username>/rmpri --data { <types.TodoData>}`
     `username: string`
 
-Remove by ID: Remove a todo item from the list based on its id
+Remove by ID: Remove a todo item from the list based on its id<br>
     `DELETE: /todo/<username>/rmid --data "{ <types.TodoData>}`
 
 For the above endpoints that include a data payload, the types.TodoData is a go struct with the following attributes.  It is onyl necessary to return the individual
