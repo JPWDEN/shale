@@ -4,6 +4,7 @@ import "github.com/go-sql-driver/mysql"
 
 //TodoData is the JSON-relatable object used for API call
 type TodoData struct {
+	Name        string         `json:"acct_name"`
 	Title       string         `json:"title"`
 	Body        string         `json:"body"`
 	Category    string         `json:"category"`

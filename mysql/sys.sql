@@ -1,5 +1,6 @@
 CREATE TABLE Todos (
     id INT NOT NULL AUTO_INCREMENT,
+    acct_name VARCHAR(255) NOT NULL,
     title VARCHAR(32) NOT NULL,
     body VARCHAR(255),
     category VARCHAR(255),

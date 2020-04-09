@@ -2,12 +2,11 @@ package service
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/bdlm/log"
 	"github.com/shale/go/data"
@@ -17,13 +16,15 @@ import (
 //Server is the interface that defines the CRUD API object
 type Server interface {
 	HandleTodos(resp http.ResponseWriter, req *http.Request)
-	AddTodo() error
-	GetTodos(resp http.ResponseWriter, req *http.Request) error
+	AddTodo(name string) error
+	GetTodos(name string, resp http.ResponseWriter, req *http.Request) error
+	GetActives(active bool, resp http.ResponseWriter, req *http.Request) error
 	GetTodosByPriority(priority int, resp http.ResponseWriter, req *http.Request) error
 	GetTodosByCategory(category string, resp http.ResponseWriter, req *http.Request) error
 	GetTodosByID(id int, resp http.ResponseWriter, req *http.Request) error
 	RemoveByTitle(resp http.ResponseWriter, req *http.Request) error
 	RemoveByPriority(resp http.ResponseWriter, req *http.Request) error
+	RemoveInactive() error
 	RemoveByID(resp http.ResponseWriter, req *http.Request) error
 	ChangeTitle(id int, resp http.ResponseWriter, req *http.Request) error
 	ChangePriority(id int, resp http.ResponseWriter, req *http.Request) error
@@ -63,98 +64,104 @@ func respondHTTPErr(resp http.ResponseWriter, req *http.Request, status int) {
 
 //HandleTodos routes various API requests to the proper function
 func (svr *ServerType) HandleTodos(resp http.ResponseWriter, req *http.Request) {
-	path := req.URL.Path
-	pathArgs := strings.Split(strings.Trim(path, "/"), "/")
+	pathArgs := strings.Split(strings.Trim(req.URL.Path, "/"), "/")
 	numArgs := len(pathArgs)
-	queryMap, _ := url.ParseQuery(req.URL.RawQuery)
-	fmt.Printf("PATHARGS %+v/%+v\n", pathArgs, queryMap)
+	fmt.Printf("%s: PATHARGS %+v\n", time.Now().String(), pathArgs)
+	if numArgs < 2 {
+		respondHTTPErr(resp, req, http.StatusBadRequest)
+		return
+	}
+	name := pathArgs[1]
 	switch req.Method {
 	case "GET":
 		var err error
-		switch pathArgs[1] {
-		case "todos":
-			if numArgs > 2 {
-				active, err := strconv.ParseBool(pathArgs[2])
-				if err == nil {
-					err = svr.GetTodos(active, resp, req)
-				}
-			} else {
-				err = svr.GetTodos(false, resp, req)
+		if numArgs == 2 {
+			err = svr.GetTodos(name, resp, req)
+			if err != nil {
+				respondErr(resp, req, http.StatusBadRequest, " GET Error: ", err)
+			}
+			return
+		} else if numArgs < 4 {
+			respondHTTPErr(resp, req, http.StatusBadRequest)
+			return
+		}
+		switch pathArgs[2] {
+		case "active":
+			active, err := strconv.ParseBool(pathArgs[3])
+			if err == nil {
+				err = svr.GetActives(active, name, resp, req)
 			}
 		case "highs":
-			if numArgs > 2 {
-				priority, err := strconv.Atoi(pathArgs[2])
-				if err == nil {
-					err = svr.GetTodosByPriority(priority, resp, req)
-				}
-			} else {
-				err = errors.New("Priority argument missing or malformed")
+			priority, err := strconv.Atoi(pathArgs[3])
+			if err == nil {
+				err = svr.GetTodosByPriority(priority, name, resp, req)
 			}
 		case "cat":
-			if numArgs > 2 {
-				err = svr.GetTodosByCategory(pathArgs[2], resp, req)
-			}
+			err = svr.GetTodosByCategory(pathArgs[3], name, resp, req)
 		case "id":
-			if numArgs > 2 {
-				id, err := strconv.Atoi(pathArgs[2])
-				if err == nil {
-					err = svr.GetTodosByID(id, resp, req)
-				}
+			id, err := strconv.Atoi(pathArgs[3])
+			if err == nil {
+				err = svr.GetTodosByID(id, name, resp, req)
 			}
 		}
 		if err != nil {
+			respondErr(resp, req, http.StatusBadRequest, " GET Error: ", err)
 			log.Errorf("GET Error: %v", err)
 		}
 		return
 	case "POST":
-		fmt.Printf("IN POST\n")
 		var err error
-		switch pathArgs[1] {
-		case "add":
-			err = svr.AddTodo(resp, req)
-		case "title":
-			if numArgs > 2 {
-				id, err := strconv.Atoi(pathArgs[2])
-				if err == nil {
-					err = svr.ChangeTitle(id, resp, req)
-				}
-			} else {
-				err = errors.New("Priority argument missing or malformed")
+		if numArgs == 3 && pathArgs[2] == "add" {
+			err = svr.AddTodo(name, resp, req)
+			if err != nil {
+				respondErr(resp, req, http.StatusBadRequest, " POST Error: ", err)
+				log.Errorf("POST Error: %v", err)
 			}
-		case "pri":
-			if numArgs > 2 {
-				id, err := strconv.Atoi(pathArgs[2])
-				if err == nil {
-					err = svr.ChangePriority(id, resp, req)
-				}
-			} else {
-				err = errors.New("Priority argument missing or malformed")
+			return
+		} else if numArgs < 4 {
+			respondHTTPErr(resp, req, http.StatusBadRequest)
+			return
+		}
+		switch pathArgs[2] {
+		case "ctitle":
+			id, err := strconv.Atoi(pathArgs[3])
+			if err == nil {
+				err = svr.ChangeTitle(id, name, resp, req)
 			}
-		case "active":
-			if numArgs > 2 {
-				id, err := strconv.Atoi(pathArgs[2])
-				if err == nil {
-					err = svr.ChangeActive(id, resp, req)
-				}
-			} else {
-				err = errors.New("Priority argument missing or malformed")
+		case "cpri":
+			id, err := strconv.Atoi(pathArgs[3])
+			if err == nil {
+				err = svr.ChangePriority(id, name, resp, req)
+			}
+		case "cactive":
+			id, err := strconv.Atoi(pathArgs[3])
+			if err == nil {
+				err = svr.ChangeActive(id, name, resp, req)
 			}
 		}
 		if err != nil {
+			respondErr(resp, req, http.StatusBadRequest, " POST Error: ", err)
 			log.Errorf("POST Error: %v", err)
 		}
 		return
 	case "DELETE":
 		var err error
-		switch pathArgs[1] {
-		case "title":
-			err = svr.RemoveByTitle(resp, req)
-		case "pri":
-			err = svr.RemoveByPriority(resp, req)
-		case "active":
-			err = svr.RemoveByID(resp, req)
+		if numArgs < 3 {
+			respondHTTPErr(resp, req, http.StatusBadRequest)
+			return
+		}
+		switch pathArgs[2] {
+		case "rmtitle":
+			err = svr.RemoveByTitle(name, resp, req)
+		case "rmpri":
+			err = svr.RemoveByPriority(name, resp, req)
+		case "rminactive":
+			err = svr.RemoveInactive(name, resp, req)
+		case "rmid":
+			err = svr.RemoveByID(name, resp, req)
 		}
 		if err != nil {
+			respondErr(resp, req, http.StatusBadRequest, " DELETE Error: ", err)
 			log.Errorf("DELETE Error: %v", err)
 		}
 		return
@@ -162,21 +169,18 @@ func (svr *ServerType) HandleTodos(resp http.ResponseWriter, req *http.Request) 
 		respondHTTPErr(resp, req, http.StatusBadRequest)
 		return
 	}
-
 }
 
 //AddTodo adds a new to do item to the to do list
-func (svr *ServerType) AddTodo(resp http.ResponseWriter, req *http.Request) error {
-	fmt.Printf("IN ADDTODO\n")
+func (svr *ServerType) AddTodo(name string, resp http.ResponseWriter, req *http.Request) error {
 	var todo types.TodoData
 	err := decodeBody(req, &todo)
 	if err != nil {
-		respondErr(resp, req, http.StatusBadRequest, " Failed to decode body: ", err)
 		return err
 	}
+	todo.Name = name
 	err = svr.DAO.InsertTodo(todo)
 	if err != nil {
-		respondErr(resp, req, http.StatusInternalServerError, " Database error: ", err)
 		return err
 	}
 	respond(resp, req, http.StatusOK, &types.ListStatus{
@@ -187,10 +191,23 @@ func (svr *ServerType) AddTodo(resp http.ResponseWriter, req *http.Request) erro
 }
 
 //GetTodos returns all of the todo items from the list
-func (svr *ServerType) GetTodos(active bool, resp http.ResponseWriter, req *http.Request) error {
-	result, err := svr.DAO.SelectAllTodos(active)
+func (svr *ServerType) GetTodos(name string, resp http.ResponseWriter, req *http.Request) error {
+	result, err := svr.DAO.SelectAllTodos(name)
 	if err != nil {
-		respondErr(resp, req, http.StatusInternalServerError, " Database error: ", err)
+		return err
+	}
+	if result == nil {
+		respond(resp, req, http.StatusNoContent, &result)
+	} else {
+		respond(resp, req, http.StatusOK, &result)
+	}
+	return nil
+}
+
+//GetActives returns all of the todo items from the list
+func (svr *ServerType) GetActives(active bool, name string, resp http.ResponseWriter, req *http.Request) error {
+	result, err := svr.DAO.SelectActives(active, name)
+	if err != nil {
 		return err
 	}
 	if result == nil {
@@ -202,10 +219,15 @@ func (svr *ServerType) GetTodos(active bool, resp http.ResponseWriter, req *http
 }
 
 //GetTodosByPriority returns all todo items that have a priority higher (lower number) or equal to the one provided
-func (svr *ServerType) GetTodosByPriority(priority int, resp http.ResponseWriter, req *http.Request) error {
-	result, err := svr.DAO.SelectByPriority(priority)
+func (svr *ServerType) GetTodosByPriority(priority int, name string, resp http.ResponseWriter, req *http.Request) error {
+	var result []types.TodoData
+	var err error
+	if priority == 0 {
+		result, err = svr.DAO.SelectNonPriority(name)
+	} else {
+		result, err = svr.DAO.SelectByPriority(priority, name)
+	}
 	if err != nil {
-		respondErr(resp, req, http.StatusInternalServerError, " Database error: ", err)
 		return err
 	}
 	if result == nil {
@@ -217,10 +239,9 @@ func (svr *ServerType) GetTodosByPriority(priority int, resp http.ResponseWriter
 }
 
 //GetTodosByCategory returns all todo items that exactly match the category provided
-func (svr *ServerType) GetTodosByCategory(category string, resp http.ResponseWriter, req *http.Request) error {
-	result, err := svr.DAO.SelectByCategory(category)
+func (svr *ServerType) GetTodosByCategory(category string, name string, resp http.ResponseWriter, req *http.Request) error {
+	result, err := svr.DAO.SelectByCategory(category, name)
 	if err != nil {
-		respondErr(resp, req, http.StatusInternalServerError, " Database error: ", err)
 		return err
 	}
 	if result == nil {
@@ -232,10 +253,9 @@ func (svr *ServerType) GetTodosByCategory(category string, resp http.ResponseWri
 }
 
 //GetTodosByID returns the todo item associated with the given db id
-func (svr *ServerType) GetTodosByID(id int, resp http.ResponseWriter, req *http.Request) error {
-	result, err := svr.DAO.SelectByID(id)
+func (svr *ServerType) GetTodosByID(id int, name string, resp http.ResponseWriter, req *http.Request) error {
+	result, err := svr.DAO.SelectByID(id, name)
 	if err != nil {
-		respondErr(resp, req, http.StatusInternalServerError, " Database error: ", err)
 		return err
 	}
 	var empty types.TodoData
@@ -248,17 +268,15 @@ func (svr *ServerType) GetTodosByID(id int, resp http.ResponseWriter, req *http.
 }
 
 //RemoveByTitle removes all todo items with the exact title
-func (svr *ServerType) RemoveByTitle(resp http.ResponseWriter, req *http.Request) error {
+func (svr *ServerType) RemoveByTitle(name string, resp http.ResponseWriter, req *http.Request) error {
 	var todo types.TodoData
 	err := decodeBody(req, &todo)
 	if err != nil {
-		respondErr(resp, req, http.StatusBadRequest, "Failed to decode body: ", err)
 		return err
 	}
 
-	err = svr.DAO.DeleteByTitle(todo.Title)
+	err = svr.DAO.DeleteByTitle(todo.Title, name)
 	if err != nil {
-		respondErr(resp, req, http.StatusInternalServerError, " Database error: ", err)
 		return err
 	}
 	respond(resp, req, http.StatusOK, &types.ListStatus{
@@ -269,17 +287,15 @@ func (svr *ServerType) RemoveByTitle(resp http.ResponseWriter, req *http.Request
 }
 
 //RemoveByPriority removes all todo items with the exact title
-func (svr *ServerType) RemoveByPriority(resp http.ResponseWriter, req *http.Request) error {
+func (svr *ServerType) RemoveByPriority(name string, resp http.ResponseWriter, req *http.Request) error {
 	var todo types.TodoData
 	err := decodeBody(req, &todo)
 	if err != nil {
-		respondErr(resp, req, http.StatusBadRequest, "Failed to decode body: ", err)
 		return err
 	}
 
-	err = svr.DAO.DeleteByPriority(todo.Priority)
+	err = svr.DAO.DeleteByPriority(todo.Priority, name)
 	if err != nil {
-		respondErr(resp, req, http.StatusInternalServerError, " Database error: ", err)
 		return err
 	}
 	respond(resp, req, http.StatusOK, &types.ListStatus{
@@ -289,18 +305,29 @@ func (svr *ServerType) RemoveByPriority(resp http.ResponseWriter, req *http.Requ
 	return nil
 }
 
+//RemoveInactive removes the todo item with the given db id
+func (svr *ServerType) RemoveInactive(name string, resp http.ResponseWriter, req *http.Request) error {
+	err := svr.DAO.DeleteInactive(name)
+	if err != nil {
+		return err
+	}
+	respond(resp, req, http.StatusOK, &types.ListStatus{
+		Status: "Success",
+		Info:   fmt.Sprintf("Todos with inactive status removed"),
+	})
+	return nil
+}
+
 //RemoveByID removes the todo item with the given db id
-func (svr *ServerType) RemoveByID(resp http.ResponseWriter, req *http.Request) error {
+func (svr *ServerType) RemoveByID(name string, resp http.ResponseWriter, req *http.Request) error {
 	var todo types.TodoData
 	err := decodeBody(req, &todo)
 	if err != nil {
-		respondErr(resp, req, http.StatusBadRequest, "Failed to decode body: ", err)
 		return err
 	}
 
-	err = svr.DAO.DeleteByID(todo.ID)
+	err = svr.DAO.DeleteByID(todo.ID, name)
 	if err != nil {
-		respondErr(resp, req, http.StatusInternalServerError, " Database error: ", err)
 		return err
 	}
 	respond(resp, req, http.StatusOK, &types.ListStatus{
@@ -311,16 +338,15 @@ func (svr *ServerType) RemoveByID(resp http.ResponseWriter, req *http.Request) e
 }
 
 //ChangeTitle changes the title of the todo item by id
-func (svr *ServerType) ChangeTitle(id int, resp http.ResponseWriter, req *http.Request) error {
+func (svr *ServerType) ChangeTitle(id int, name string, resp http.ResponseWriter, req *http.Request) error {
 	var todo types.TodoData
 	err := decodeBody(req, &todo)
 	if err != nil {
-		respondErr(resp, req, http.StatusBadRequest, "Failed to decode body: ", err)
+		return err
 	}
 
-	err = svr.DAO.UpdateTitle(todo.ID, todo.Title)
+	err = svr.DAO.UpdateTitle(id, todo.Title, name)
 	if err != nil {
-		respondErr(resp, req, http.StatusInternalServerError, " Database error: ", err)
 		return err
 	}
 	respond(resp, req, http.StatusOK, &types.ListStatus{
@@ -331,16 +357,15 @@ func (svr *ServerType) ChangeTitle(id int, resp http.ResponseWriter, req *http.R
 }
 
 //ChangePriority changes the priority level of the todo item by id
-func (svr *ServerType) ChangePriority(id int, resp http.ResponseWriter, req *http.Request) error {
+func (svr *ServerType) ChangePriority(id int, name string, resp http.ResponseWriter, req *http.Request) error {
 	var todo types.TodoData
 	err := decodeBody(req, &todo)
 	if err != nil {
-		respondErr(resp, req, http.StatusBadRequest, "Failed to decode body: ", err)
+		return err
 	}
 
-	err = svr.DAO.UpdatePriority(todo.ID, todo.Priority)
+	err = svr.DAO.UpdatePriority(id, todo.Priority, name)
 	if err != nil {
-		respondErr(resp, req, http.StatusInternalServerError, " Database error: ", err)
 		return err
 	}
 	respond(resp, req, http.StatusOK, &types.ListStatus{
@@ -351,16 +376,15 @@ func (svr *ServerType) ChangePriority(id int, resp http.ResponseWriter, req *htt
 }
 
 //ChangeActive changes whether a given todo item is active or not
-func (svr *ServerType) ChangeActive(id int, resp http.ResponseWriter, req *http.Request) error {
+func (svr *ServerType) ChangeActive(id int, name string, resp http.ResponseWriter, req *http.Request) error {
 	var todo types.TodoData
 	err := decodeBody(req, &todo)
 	if err != nil {
-		respondErr(resp, req, http.StatusBadRequest, "Failed to decode body: ", err)
+		return err
 	}
 
-	err = svr.DAO.UpdateActive(todo.ID, todo.Active)
+	err = svr.DAO.UpdateActive(id, todo.Active, name)
 	if err != nil {
-		respondErr(resp, req, http.StatusInternalServerError, " Database error: ", err)
 		return err
 	}
 	respond(resp, req, http.StatusOK, &types.ListStatus{

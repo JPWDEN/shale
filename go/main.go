@@ -11,24 +11,18 @@ import (
 )
 
 func init() {
-	log.SetFormatter(&log.TextFormatter{
-		DisableColors: true,
-		FullTimestamp: true,
-	})
+	//Set up logging
+	log.SetFormatter(&log.TextFormatter{DisableColors: true, FullTimestamp: true})
 	log.SetLevel(log.DebugLevel)
 }
 
 func main() {
 	log.Info("Starting main service")
 
-	//Logging?
-
 	//Set env vars
 	port := os.Getenv("PORT")
-	addr := os.Getenv("ADDRESS")
-	if port == "" || addr == "" {
+	if port == "" {
 		port = ":8080"
-		addr = "localhost"
 	}
 	test := false
 	if os.Getenv("TEST") == "true" {
@@ -37,7 +31,7 @@ func main() {
 
 	//Set up db connection
 	db, err := sql.Open("mysql", "root:root@tcp(db:3306)/sys?parseTime=true")
-	//db, err := sql.Open("mysql", "root@tcp(localhost:3306)/sys?parseTime=true")
+	//db, err := sql.Open("mysql", "root@tcp(localhost:3306)/sys?parseTime=true")	//Use for local testing outside of docker
 	if err != nil {
 		panic(err.Error())
 	}
@@ -48,15 +42,16 @@ func main() {
 	//Instantiate server and multiplexer, register endpoints, and start listening
 	mux := http.NewServeMux()
 	mux.HandleFunc("/todo/", svc.HandleTodos)
-	log.Infof("Starting API on %s", addr)
+	log.Infof("Starting API on port %s", port)
 	log.Fatal(http.ListenAndServe(port, mux))
 
-	//Test client
+	//Future implementation:  Run a test client
 	go func() {
 		if !test {
 			return
 		}
 		//for {
+		//	testClient.Run()
 		//}
 	}()
 

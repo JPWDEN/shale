@@ -1,5 +1,39 @@
+Get todos:
+curl -vv 73.78.155.49:8080/todo/tom
 
+Get Active:
+curl -vv 73.78.155.49:8080/todo/tom/active/1
 
+Get Inactive:
+curl -vv 73.78.155.49:8080/todo/tom/active/0
 
-Additonal feature work:
-Select by date
+ADD:
+curl -v -X POST localhost:8080/todo/tom/add --data "{\"title\": \"#2\", \"item_priority\": 5, \"category\": \"shopping\"}"
+curl -v -X POST localhost:8080/todo/tom/add --data "{\"title\": \"Brand New\", \"body\": \"This is fun\", \"item_priority\": 8, \"category\": \"entertainment\"}"
+
+ByPriority:
+curl -vv 73.78.155.49:8080/todo/tom/highs/6
+
+ByCategory:
+curl -vv 73.78.155.49:8080/todo/tom/cat/shopping
+
+ByID:
+curl -vv 73.78.155.49:8080/todo/tom/id/4
+
+Change Title:
+curl -v -X POST localhost:8080/todo/tom/ctitle/4 --data "{\"title\": \"Changed TITLE\"}"\"
+
+Change Priority:
+curl -v -X POST localhost:8080/todo/tom/cpri/4 --data "{\"item_priority\": 2}"\"
+
+Change Active:
+curl -v -X POST localhost:8080/todo/tom/cactive/2 --data "{\"active\": false}"\"
+
+Remove Title:
+curl -v -X DELETE localhost:8080/todo/tom/rmtitle --data "{\"title\": \"#2\"}"\"
+
+Remove Priority:
+curl -v -X DELETE localhost:8080/todo/tom/rmpri --data "{\"item_priority\": 0}"\"
+
+Remove id:
+curl -v -X DELETE localhost:8080/todo/tom/rmid --data "{\"id\": 8}"\"
