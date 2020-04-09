@@ -9,57 +9,57 @@ both containers.
 Shale currently includes the following endpoints.  All of the below endpoint concern data for a single specified user:
 
 Get Todos:  Returns a list of all todo item<br>
-    `GET: /todo/<username>`
-    `username:  string`
+    `GET: /todo/<username>`<br>
+    `username:  string`<br>
 
 Get Active/Inactive: Returns a list of all todo items that have either an active or inactive status, as specified<br>
-    `GET: /todo/<username>/active/<active>`
-    `username: string`
-    `active:  boolean`
+    `GET: /todo/<username>/active/<active>`<br>
+    `username: string`<br>
+    `active:  boolean`<br>
 
 Get by Priority:  Return a list of todo items with the provided priority level<br>
-    `GET: /todo/<username>/highs/<priority>`
-    `username: string`
-    `priority: integer`
+    `GET: /todo/<username>/highs/<priority>`<br>
+    `username: string`<br>
+    `priority: integer`<br>
 
 Get by Category:  Return a list of todo items with the provided category<br>
-    `GET: /todo/<username>/cat/<category>`
-    `username: string`
-    `category: string`
+    `GET: /todo/<username>/cat/<category>`<br>
+    `username: string`<br>
+    `category: string`<br>
 
 Get by ID:  Return a list of todo items with the provided id<br>
-    `GET: /todo/<username>/id/<id>`
-    `username: string`
-    `id: integer`
+    `GET: /todo/<username>/id/<id>`<br>
+    `username: string`<br>
+    `id: integer`<br>
 
 Add Item: Add a new todo item to the list<br>
-    `POST: /todo/<username>/add --data { <types.TodoData> }`
-    `username: string`
+    `POST: /todo/<username>/add --data { <types.TodoData> }`<br>
+    `username: string`<br>
 
 
 Change Title:  Change the title of a todo item based on its id<br>
-    `POST: /todo/<username>/ctitle/<id> --data { <types.TodoData>}`
-    `username: string`
-    `id: integer`
+    `POST: /todo/<username>/ctitle/<id> --data { <types.TodoData>}`<br>
+    `username: string`<br>
+    `id: integer`<br>
 
 Change Priority:  Change the priority of a todo item based on its id<br>
-    `POST: /todo/<username>/cpri/<id> --data { <types.TodoData> }`
-    `username: string`
-    `id integer`
+    `POST: /todo/<username>/cpri/<id> --data { <types.TodoData> }`<br>
+    `username: string`<br>
+    `id integer`<br>
 
 Change Active:  Change whether a todo item is active or inactive based on its id<br>
-    `POST: /todo/<username>/cactive/<id> --data { <types.TodoData>}`
+    `POST: /todo/<username>/cactive/<id> --data { <types.TodoData>}`<br>
 
 Remove by Title: Remove a todo item from the list based on its title<br>
-    `DELETE: /todo/<username>/rmtitle --data { <types.TodoData>}`
-    `username: string`
+    `DELETE: /todo/<username>/rmtitle --data { <types.TodoData>}`<br>
+    `username: string`<br>
 
 Remove by Priority: Remove all todo items from the list that have a given priority level<br>
-    `DELETE: /todo/<username>/rmpri --data { <types.TodoData>}`
-    `username: string`
+    `DELETE: /todo/<username>/rmpri --data { <types.TodoData>}`<br>
+    `username: string`<br>
 
 Remove by ID: Remove a todo item from the list based on its id<br>
-    `DELETE: /todo/<username>/rmid --data "{ <types.TodoData>}`
+    `DELETE: /todo/<username>/rmid --data "{ <types.TodoData>}`<br>
 
 For the above endpoints that include a data payload, the types.TodoData is a go struct with the following attributes.  It is onyl necessary to return the individual
 values of concern for a given endpoint:
