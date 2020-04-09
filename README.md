@@ -9,69 +9,69 @@ both containers.
 Shale currently includes the following endpoints.  All of the below endpoint concern data for a single specified user:
 
 Get Todos:  Returns a list of all todo item
-    * GET: /todo/<username>
-    * username:  string
+    `GET: /todo/<username>`
+    `username:  string`
 
 Get Active/Inactive: Returns a list of all todo items that have either an active or inactive status, as specified
-    * GET: /todo/<username>/active/<active>
-    * username: string
-    * active:  boolean
+    `GET: /todo/<username>/active/<active>`
+    `username: string`
+    `active:  boolean`
 
 Get by Priority:  Return a list of todo items with the provided priority level
-    * GET: /todo/<username>/highs/<priority>
-    * username: string
-    * priority: integer
+    `GET: /todo/<username>/highs/<priority>`
+    `username: string`
+    `priority: integer`
 
 Get by Category:  Return a list of todo items with the provided category
-    * GET: /todo/<username>/cat/<category>
-    * username: string
-    * category: string
+    `GET: /todo/<username>/cat/<category>`
+    `username: string`
+    `category: string`
 
 Get by ID:  Return a list of todo items with the provided id
-    * GET: /todo/<username>/id/<id>
-    * username: string
-    * id: integer
+    `GET: /todo/<username>/id/<id>`
+    `username: string`
+    `id: integer`
 
 Add Item: Add a new todo item to the list
-    * POST: /todo/<username>/add --data { <types.TodoData> }
-    * username: string
+    `POST: /todo/<username>/add --data { <types.TodoData> }`
+    `username: string`
 
 
 Change Title:  Change the title of a todo item based on its id
-    * POST: /todo/<username>/ctitle/<id> --data { <types.TodoData>}
-    * username: string
-    * id: integer
+    `POST: /todo/<username>/ctitle/<id> --data { <types.TodoData>}`
+    `username: string`
+    `id: integer`
 
 Change Priority:  Change the priority of a todo item based on its id
-    * POST: /todo/<username>/cpri/<id> --data { <types.TodoData> }
-    * username: string
-    * id integer
+    `POST: /todo/<username>/cpri/<id> --data { <types.TodoData> }`
+    `username: string`
+    `id integer`
 
 Change Active:  Change whether a todo item is active or inactive based on its id
-    * POST: /todo/<username>/cactive/<id> --data { <types.TodoData>}
+    `POST: /todo/<username>/cactive/<id> --data { <types.TodoData>}`
 
 Remove by Title: Remove a todo item from the list based on its title
-    * DELETE: /todo/<username>/rmtitle --data { <types.TodoData>}
-    * username: string
+    `DELETE: /todo/<username>/rmtitle --data { <types.TodoData>}`
+    `username: string`
 
 Remove by Priority: Remove all todo items from the list that have a given priority level
-    * DELETE: /todo/<username>/rmpri --data { <types.TodoData>}
-    * username: string
+    `DELETE: /todo/<username>/rmpri --data { <types.TodoData>}`
+    `username: string`
 
 Remove by ID: Remove a todo item from the list based on its id
-    * DELETE: /todo/<username>/rmid --data "{ <types.TodoData>}
+    `DELETE: /todo/<username>/rmid --data "{ <types.TodoData>}`
 
 For the above endpoints that include a data payload, the types.TodoData is a go struct with the following attributes.  It is onyl necessary to return the individual
 values of concern for a given endpoint:
 
-> Name        string         `json:"acct_name"`
-> Title       string         `json:"title"`
-> Body        string         `json:"body"`
-> Category    string         `json:"category"`
-> Priority    int            `json:"item_priority"`
-> PublishDate mysql.NullTime `json:"publish_date"`
-> Active      bool           `json:"active"`
-> ID          int            `json:"id"`
+`Name        string         json:"acct_name"`
+`Title       string         json:"title"`
+`Body        string         json:"body"`
+`Category    string         json:"category"`
+`Priority    int            json:"item_priority"`
+`PublishDate mysql.NullTime json:"publish_date"`
+`Active      bool           json:"active"`
+`ID          int            json:"id"`
 
 Note the following conditions:
 1.  ID is assigned byu the database and is immutable
