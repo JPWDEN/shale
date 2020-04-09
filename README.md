@@ -60,18 +60,19 @@ Remove by Priority: Remove all todo items from the list that have a given priori
 
 Remove by ID: Remove a todo item from the list based on its id<br>
     `DELETE: /todo/<username>/rmid --data "{ <types.TodoData>}`<br>
+    `username: string`<br>
 
 For the above endpoints that include a data payload, the types.TodoData is a go struct with the following attributes.  It is onyl necessary to return the individual
 values of concern for a given endpoint:
 
-`Name        string         json:"acct_name"`
-`Title       string         json:"title"`
-`Body        string         json:"body"`
-`Category    string         json:"category"`
-`Priority    int            json:"item_priority"`
-`PublishDate mysql.NullTime json:"publish_date"`
-`Active      bool           json:"active"`
-`ID          int            json:"id"`
+`Name        string         json:"acct_name"`<br>
+`Title       string         json:"title"`<br>
+`Body        string         json:"body"`<br>
+`Category    string         json:"category"`<br>
+`Priority    int            json:"item_priority"`<br>
+`PublishDate mysql.NullTime json:"publish_date"`<br>
+`Active      bool           json:"active"`<br>
+`ID          int            json:"id"`<br>
 
 Note the following conditions:
 1.  ID is assigned byu the database and is immutable
