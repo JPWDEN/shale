@@ -8,7 +8,7 @@ both containers.
 ## Endpoints
 Shale currently includes the following endpoints.  All of the below endpoint concern data for a single specified user:
 
-Get Todos:  Returns a list of all todo item
+Get Todos:  Returns a list of all todo item<br>
     `GET: /todo/<username>`
     `username:  string`
 
