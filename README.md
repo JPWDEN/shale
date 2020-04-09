@@ -95,19 +95,19 @@ Get todos by Category: `curl -vv 73.78.155.49:8080/todo/tom/cat/pandemic`
 
 Get todos by ID: `curl -vv 73.78.155.49:8080/todo/tom/id/4`
 
-ADD a new todo: `curl -vv -X POST localhost:8080/todo/tom/add --data {"Title": "Cure covid-19", "item_priority": 5, "category": "pandemic"}`
+ADD a new todo: `curl -vv -X POST 73.78.155.49:8080/todo/tom/add --data {"Title": "Cure covid-19", "item_priority": 5, "category": "pandemic"}`
 
-Change todo Title: `curl -vv -X POST localhost:8080/todo/tom/ctitle/4 --data {"title": "Research covid-19 first"}`
+Change todo Title: `curl -vv -X POST 73.78.155.49:8080/todo/tom/ctitle/4 --data {"title": "Research covid-19 first"}`
 
-Change todo Priority: `curl -vv -X POST localhost:8080/todo/tom/cpri/4 --data {"item_priority": 2}`
+Change todo Priority: `curl -vv -X POST 73.78.155.49:8080/todo/tom/cpri/4 --data {"item_priority": 2}`
 
-Change to Active Status:  `curl -vv -X POST localhost:8080/todo/tom/cactive/2 --data {"active": false}`
+Change to Active Status:  `curl -vv -X POST 73.78.155.49:8080/todo/tom/cactive/2 --data {"active": false}`
 
-Remove todo Based on Title: `curl -vv -X DELETE localhost:8080/todo/tom/rmtitle --data {"title": "Research covid-19 first"}`
+Remove todo Based on Title: `curl -vv -X DELETE 73.78.155.49:8080/todo/tom/rmtitle --data {"title": "Research covid-19 first"}`
 
-Remove todos with Given Priority: `curl -vv -X DELETE localhost:8080/todo/tom/rmpri --data {"item_priority": 0}`
+Remove todos with Given Priority: `curl -vv -X DELETE 73.78.155.49:8080/todo/tom/rmpri --data {"item_priority": 0}`
 
-Remove todo with id: `curl -vv -X DELETE localhost:8080/todo/tom/rmid --data {"id": 8}`
+Remove todo with id: `curl -vv -X DELETE 73.78.155.49:8080/todo/tom/rmid --data {"id": 8}`
 
 
 ## Potential Pitfalls/Assumptions
