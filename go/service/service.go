@@ -66,7 +66,7 @@ func respondHTTPErr(resp http.ResponseWriter, req *http.Request, status int) {
 func (svr *ServerType) HandleTodos(resp http.ResponseWriter, req *http.Request) {
 	pathArgs := strings.Split(strings.Trim(req.URL.Path, "/"), "/")
 	numArgs := len(pathArgs)
-	fmt.Printf("%s: PATHARGS %+v\n", time.Now().String(), pathArgs)
+	fmt.Printf("\n%s: PATHARGS %+v\n", time.Now().String(), pathArgs)
 	if numArgs < 2 {
 		respondHTTPErr(resp, req, http.StatusBadRequest)
 		return

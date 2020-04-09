@@ -3,6 +3,7 @@ package data
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/bdlm/log"
@@ -158,6 +159,7 @@ func (store *StoreType) SelectByID(id int, name string) (types.TodoData, error) 
 
 //DeleteByTitle deletes all todo items with the specified title
 func (store *StoreType) DeleteByTitle(title string, name string) error {
+	fmt.Printf("DEL VALUES: %s/%s\n", title, name)
 	_, err := store.DAO.Query(`DELETE FROM Todos WHERE title = ? AND acct_name = ?`, title, name)
 	return err
 }

@@ -2,9 +2,12 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"os"
+	"time"
 
+	"github.com/shale/go/client"
 	"github.com/shale/go/data"
 	"github.com/shale/go/service"
 	log "github.com/sirupsen/logrus"
@@ -39,21 +42,20 @@ func main() {
 	dao := &data.StoreType{DAO: db}
 	svc := &service.ServerType{DAO: dao}
 
+	//Run a simple test client
+	go func() {
+		time.Sleep(time.Second * 10)
+		if test {
+			fmt.Printf("Running client\n")
+			client.Run()
+		}
+	}()
+
 	//Instantiate server and multiplexer, register endpoints, and start listening
 	mux := http.NewServeMux()
 	mux.HandleFunc("/todo/", svc.HandleTodos)
 	log.Infof("Starting API on port %s", port)
 	log.Fatal(http.ListenAndServe(port, mux))
-
-	//Future implementation:  Run a test client
-	go func() {
-		if !test {
-			return
-		}
-		//for {
-		//	testClient.Run()
-		//}
-	}()
 
 	log.Info("Ending service")
 }
