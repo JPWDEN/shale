@@ -46,7 +46,7 @@ Change Title:  Change the title of a todo item based on its id<br>
 Change Priority:  Change the priority of a todo item based on its id<br>
     `POST: /todo/<username>/cpri/<id> --data { <types.TodoData> }`<br>
     `username: string`<br>
-    `id integer`<br>
+    `id: integer`<br>
 
 Change Active:  Change whether a todo item is active or inactive based on its id<br>
     `POST: /todo/<username>/cactive/<id> --data { <types.TodoData>}`<br>
