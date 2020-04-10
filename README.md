@@ -74,10 +74,10 @@ For the above endpoints that include a data payload, the types.TodoData is a go 
 `Active      bool           json:"active"`<br>
 `ID          int            json:"id"`<br>
 
-As an example, a call to `/todo/<username>/ctitle/<id> --data { <types.TodoData>}` will cahnge the title of a todo list item.  the only data that need to be provided is the title field and its value, in json format.  Please see the below examples for a full curl command.
+As an example, a call to `/todo/<username>/ctitle/<id> --data { <types.TodoData>}` will change the title of a todo list item.  the only data that needs to be provided is the title field and its value, in JSON format.  Please see the below examples for a full curl command.
 
 Note the following conditions:
-1.  ID is assigned byu the database and is immutable
+1.  ID is assigned by the database and is immutable
 2.  Priority can be any integer.  Negative values are acceptable.  A priority of 0 is treated is if it does not have a priority.
 3.  Todo notes are added with a default active value of true
 
