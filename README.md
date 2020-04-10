@@ -6,7 +6,7 @@ Both the go API as well the accompanying database are dockerized and sit in thei
 both containers.
 
 ## Endpoints
-Shale currently includes the following endpoints.  All of the below endpoint concern data for a single specified user:
+Shale currently includes the following endpoints.  Every endpoint requires a `username` to select the necessary todo list.  In this way, the system allows for multiple lists.  All of the below endpoint concern data for a single specified user:
 
 Get Todos:  Returns a list of all todo item<br>
     `GET: /todo/<username>`<br>
@@ -81,7 +81,9 @@ Note the following conditions:
 
 
 ## Example Usage
-The API is currently being hosted at `73.78.155.49:8080`.  Below are usage examples for each endpoint using curl.  The examples assume a user `tom` and that there is already data in the database that satisfies the request.
+The API is currently being hosted at `73.78.155.49:8080`.  Because authentication is not required for this project, a username can be simply chosen, and todos added or changed based on that username, with the format listed in the above section.
+
+Below are usage examples for each endpoint using curl.  The examples assume a username of `tom` and that there is already data in the database that satisfies the request.  These examples are simply that; there is no telling whats actually in the database at any given moment.
 
 Get todos: `curl -vv 73.78.155.49:8080/todo/tom`
 
