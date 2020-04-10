@@ -2,8 +2,7 @@
 
 ## Description
 Shale is a simple RESTful API used for the management of a to-do list.  The backend functionality is written in go and database functionality comes from mysql.
-Both the go API as well the accompanying database are dockerized and sit in their own container.  A `docker-compose` file can be used to build and run
-both containers.
+Both the go API as well the accompanying database are dockerized and sit in their own container.  A `docker-compose` file can be used to build and run both containers.  A very simple client is also included, which may stand as the starting point for a more rigorous set of tests.
 
 ## Endpoints
 Shale currently includes the following endpoints.  Every endpoint requires a `username` to select the necessary todo list.  In this way, the system allows for multiple lists.  All of the below endpoint concern data for a single specified user:
