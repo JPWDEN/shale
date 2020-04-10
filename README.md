@@ -62,8 +62,7 @@ Remove by ID: Remove a todo item from the list based on its id<br>
     `DELETE: /todo/<username>/rmid --data "{ <types.TodoData>}`<br>
     `username: string`<br>
 
-For the above endpoints that include a data payload, the types.TodoData is a go struct with the following attributes.  It is onyl necessary to return the individual
-values of concern for a given endpoint:
+For the above endpoints that include a data payload, the types.TodoData is a go struct with the following attributes.  JSON mappings are listed with the struct below and should be used to compose the payload.  It is only necessary to return the individual values of concern for a given endpoint:
 
 `Name        string         json:"acct_name"`<br>
 `Title       string         json:"title"`<br>
@@ -73,6 +72,8 @@ values of concern for a given endpoint:
 `PublishDate mysql.NullTime json:"publish_date"`<br>
 `Active      bool           json:"active"`<br>
 `ID          int            json:"id"`<br>
+
+As an example, a call to `/todo/<username>/ctitle/<id> --data { <types.TodoData>}` will cahnge the title of a todo list item.  the only data that need to be provided is the title field and its value, in json format.  Please see the below examples for a full curl command.
 
 Note the following conditions:
 1.  ID is assigned byu the database and is immutable
